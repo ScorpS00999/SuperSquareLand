@@ -29,7 +29,7 @@ public class HeroController : MonoBehaviour
         {
             inputMoveX = 1f;
         }
-
+        
         return inputMoveX;
     }
 
