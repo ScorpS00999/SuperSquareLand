@@ -38,7 +38,6 @@ public class HeroEntity : MonoBehaviour
         Vector2 velocity = _rigidbody.velocity;
         velocity.x = _horizontalSpeed * _moveDirX;
         _rigidbody.velocity = velocity;
-        Debug.Log("dkgrdnirdgn");
     }
     
     private void Update()
