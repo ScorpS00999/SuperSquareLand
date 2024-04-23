@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class HeroEntity : MonoBehaviour
 {
+    #region Header
+
     [Header("Physics")]
     [SerializeField] private Rigidbody2D _rigidbody;
 
@@ -29,7 +31,23 @@ public class HeroEntity : MonoBehaviour
     [Header("Ground")]
     [SerializeField] private GroundDetector _groundDetector;
 
-    public bool ISTouchingGround { get; private set; } = false;
+    [Header("Jump")]
+    [SerializeField] private HeroJumpSettings _jumpSettings;
+    [SerializeField] private HeroFallSettings _jumpFallSettings;
+
+    enum JumpState
+    {
+        NotJumping,
+        JumpImpulsion,
+        Falling
+    }
+
+    private JumpState _jumpState = JumpState.NotJumping;
+    private float _jumpTimer = 0f;
+
+    #endregion
+
+    public bool IsTouchingGround { get; private set; } = false;
 
     public void SetMoveDirX(float dirX)
     {
@@ -49,13 +67,21 @@ public class HeroEntity : MonoBehaviour
             _ChangeOrientFromHorizontalMovement();
         }
 
-        if (!ISTouchingGround)
+        if (IsJumping)
         {
-            _ApplyFallGravity();
+            _UpdateJump();
         } else
         {
-            _ResetVerticalSpeed();
+            if (!IsTouchingGround)
+            {
+                _ApplyFallGravity(_fallSettings);
+            }
+            else
+            {
+                _ResetVerticalSpeed();
+            }
         }
+
 
         _ApplyHorizontalSpeed();
         _ApplyVerticalSpeed();
@@ -136,19 +162,17 @@ public class HeroEntity : MonoBehaviour
 
     public void DashMovement()
     {
-        _horizontalSpeed += _dashSettings.speed * _dashSettings.duration;
-        if (_horizontalSpeed > _dashSettings.speed)
-        {
-            _horizontalSpeed = _dashSettings.speed;
-        }
+        //cc
+        _horizontalSpeed = _dashSettings.speed;
+        //va voi saut surement
     }
 
-    private void _ApplyFallGravity()
+    private void _ApplyFallGravity(HeroFallSettings settings)
     {
-        _verticalSpeed -= _fallSettings.fallGravity * Time.fixedDeltaTime;
-        if (_verticalSpeed < -_fallSettings.fallSpeedMax)
+        _verticalSpeed -= settings.fallGravity * Time.fixedDeltaTime;
+        if (_verticalSpeed < -settings.fallSpeedMax)
         {
-            _verticalSpeed = -_fallSettings.fallSpeedMax;
+            _verticalSpeed = -settings.fallSpeedMax;
         }
     }
 
@@ -161,13 +185,75 @@ public class HeroEntity : MonoBehaviour
 
     private void _ApplyGroundDetection()
     {
-        ISTouchingGround = _groundDetector.DetectGroundNearBy();
+        IsTouchingGround = _groundDetector.DetectGroundNearBy();
     }
 
     private void _ResetVerticalSpeed()
     {
         _verticalSpeed = 0f;
     }
+
+
+
+
+    public void JumpStart()
+    {
+        _jumpState = JumpState.JumpImpulsion;
+        _jumpTimer = 0f;
+    }
+
+    public bool IsJumping => _jumpState != JumpState.NotJumping;
+
+
+
+
+    private void _UpdateJumpStateImpulsion()
+    {
+        //dash à la vertical
+        _jumpTimer += Time.fixedDeltaTime;
+        if (_jumpTimer < _jumpSettings.jumpMaxDuration)
+        {
+            _verticalSpeed = _jumpSettings.jumpSpeed;
+        } else
+        {
+            _jumpState = JumpState.Falling;
+        }
+    }
+
+    private void _UpdateJumpStateFalling()
+    {
+        if (!IsTouchingGround)
+        {
+            _ApplyFallGravity(_jumpFallSettings);
+        }
+        else
+        {
+            _ResetVerticalSpeed();
+            _jumpState = JumpState.NotJumping;
+        }
+    }
+
+    private void _UpdateJump()
+    {
+        switch (_jumpState)
+        {
+            case JumpState.JumpImpulsion:
+                _UpdateJumpStateImpulsion();
+                break;
+
+            case JumpState.Falling:
+                _UpdateJumpStateFalling();
+                break;
+        }
+    }
+
+
+
+
+
+
+
+
 
     private void OnGUI()
     {
@@ -177,7 +263,7 @@ public class HeroEntity : MonoBehaviour
         GUILayout.Label(gameObject.name);
         GUILayout.Label($"MoveDirX = {_moveDirX}");
         GUILayout.Label($"OrientX = {_orientX}");
-        if (ISTouchingGround)
+        if (IsTouchingGround)
         {
             GUILayout.Label("OnGround");
         }
@@ -185,6 +271,7 @@ public class HeroEntity : MonoBehaviour
         {
             GUILayout.Label("InAir");
         }
+        GUILayout.Label($"JumpState = {_jumpState}");
         GUILayout.Label($"Horizontal Speed = {_horizontalSpeed}");
         GUILayout.Label($"Vertical Speed = {_verticalSpeed}");
         GUILayout.EndVertical();

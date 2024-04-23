@@ -822,7 +822,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 3aa90e189c58491468a67afb3329e400, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -860,6 +860,12 @@ MonoBehaviour:
     fallGravity: 20
     fallSpeedMax: 10
   _groundDetector: {fileID: 8653766404188182654}
+  _jumpSettings:
+    jumpSpeed: 10
+    jumpMaxDuration: 0.15
+  _jumpFallSettings:
+    fallGravity: 20
+    fallSpeedMax: 10
 --- !u!114 &8653766404188182654
 MonoBehaviour:
   m_ObjectHideFlags: 0
