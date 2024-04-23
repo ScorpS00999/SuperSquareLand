@@ -55,6 +55,13 @@ public class HeroController : MonoBehaviour
 
 
 
+    private bool _GetInputJump()
+    {
+        return Input.GetKey(KeyCode.Space);
+    }
+
+
+
     private void Update()
     {
         _entity.SetMoveDirX(GetInputMoveX());
@@ -64,6 +71,15 @@ public class HeroController : MonoBehaviour
             if (_entity.IsTouchingGround && !_entity.IsJumping)
             {
                 _entity.JumpStart();
+            }
+        }
+
+
+        if (_entity.IsJumpImpulsing)
+        {
+            if (!_GetInputJump() && _entity.IsJumpMinDurationReached)
+            {
+                _entity.StopJumpImpulsion();
             }
         }
     }
