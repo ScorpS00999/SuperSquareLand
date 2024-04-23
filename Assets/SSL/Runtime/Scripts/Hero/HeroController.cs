@@ -22,14 +22,27 @@ public class HeroController : MonoBehaviour
         float inputMoveX = 0f;
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Q))
         {
+            if (Input.GetKey(KeyCode.E))
+            {
+                _entity._DashMovement();
+            }
             inputMoveX = -1f;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
+            if (Input.GetKey(KeyCode.E))
+            {
+                _entity._DashMovement();
+            }
             inputMoveX = 1f;
         }
-        
+
+        if (Input.GetKey(KeyCode.E))
+        {
+            _entity._DashMovement();
+        }
+
         return inputMoveX;
     }
 
