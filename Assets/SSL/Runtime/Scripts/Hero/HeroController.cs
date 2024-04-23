@@ -24,7 +24,7 @@ public class HeroController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.E))
             {
-                _entity._DashMovement();
+                _entity.DashMovement();
             }
             inputMoveX = -1f;
         }
@@ -33,14 +33,14 @@ public class HeroController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.E))
             {
-                _entity._DashMovement();
+                _entity.DashMovement();
             }
             inputMoveX = 1f;
         }
 
         if (Input.GetKey(KeyCode.E))
         {
-            _entity._DashMovement();
+            _entity.DashMovement();
         }
 
         return inputMoveX;

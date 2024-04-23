@@ -26,6 +26,11 @@ public class HeroEntity : MonoBehaviour
     [Header("Fall")]
     [SerializeField] private HeroFallSettings _fallSettings;
 
+    [Header("Ground")]
+    [SerializeField] private GroundDetector _groundDetector;
+
+    public bool ISTouchingGround { get; private set; } = false;
+
     public void SetMoveDirX(float dirX)
     {
         _moveDirX = dirX;
@@ -33,6 +38,8 @@ public class HeroEntity : MonoBehaviour
 
     private void FixedUpdate()
     {
+        _ApplyGroundDetection();
+
         if (_AreOrientAndMovementOpposite())
         {
             _TurnBack();
@@ -42,7 +49,13 @@ public class HeroEntity : MonoBehaviour
             _ChangeOrientFromHorizontalMovement();
         }
 
-        _ApplyFallGravity();
+        if (!ISTouchingGround)
+        {
+            _ApplyFallGravity();
+        } else
+        {
+            _ResetVerticalSpeed();
+        }
 
         _ApplyHorizontalSpeed();
         _ApplyVerticalSpeed();
@@ -121,7 +134,7 @@ public class HeroEntity : MonoBehaviour
         return _moveDirX * _orientX < 0f;
     }
 
-    public void _DashMovement()
+    public void DashMovement()
     {
         _horizontalSpeed += _dashSettings.speed * _dashSettings.duration;
         if (_horizontalSpeed > _dashSettings.speed)
@@ -146,6 +159,16 @@ public class HeroEntity : MonoBehaviour
         _rigidbody.velocity = velocity;
     }
 
+    private void _ApplyGroundDetection()
+    {
+        ISTouchingGround = _groundDetector.DetectGroundNearBy();
+    }
+
+    private void _ResetVerticalSpeed()
+    {
+        _verticalSpeed = 0f;
+    }
+
     private void OnGUI()
     {
         if (!_guiDebug) return;
@@ -154,6 +177,14 @@ public class HeroEntity : MonoBehaviour
         GUILayout.Label(gameObject.name);
         GUILayout.Label($"MoveDirX = {_moveDirX}");
         GUILayout.Label($"OrientX = {_orientX}");
+        if (ISTouchingGround)
+        {
+            GUILayout.Label("OnGround");
+        }
+        else
+        {
+            GUILayout.Label("InAir");
+        }
         GUILayout.Label($"Horizontal Speed = {_horizontalSpeed}");
         GUILayout.Label($"Vertical Speed = {_verticalSpeed}");
         GUILayout.EndVertical();
