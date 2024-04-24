@@ -188,10 +188,7 @@ public class HeroController : MonoBehaviour
 
         if (_GetInputDash())
         {
-            if (!_entity._isDashing)
-            {
-                _entity.DashMovement();
-            }
+            _entity.dashStart();
         }
 
 

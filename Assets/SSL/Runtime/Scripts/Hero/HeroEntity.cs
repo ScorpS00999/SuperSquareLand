@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -34,8 +35,12 @@ public class HeroEntity : MonoBehaviour
     [Header("Ground")]
     [SerializeField] private GroundDetector _groundDetector;
 
+    [Header("Wall")]
+    [SerializeField] private WallDetector _wallDetector;
+
     [Header("Jump")]
     [SerializeField] private HeroJumpSettings _jumpSettings;
+    [SerializeField] private List<HeroJumpSettings> _jumpSettings2;
     [SerializeField] private HeroFallSettings _jumpFallSettings;
 
     enum JumpState
@@ -58,6 +63,8 @@ public class HeroEntity : MonoBehaviour
 
     public bool IsTouchingGround { get; private set; } = false;
 
+    public bool IsTouchingWall { get; private set; } = false;
+
     public void SetMoveDirX(float dirX)
     {
         _moveDirX = dirX;
@@ -66,6 +73,7 @@ public class HeroEntity : MonoBehaviour
     private void FixedUpdate()
     {
         _ApplyGroundDetection();
+        _ApplyWallDetection();
 
         HeroHorizontalMovementSettings horizontalMovementsSettings = _GetCurrentHorizontalMovementsSettings();
 
@@ -76,6 +84,10 @@ public class HeroEntity : MonoBehaviour
         {
             _UpdateHorizontalSpeed(horizontalMovementsSettings);
             _ChangeOrientFromHorizontalMovement();
+        }
+        if (_isDashing)
+        {
+            DashMovement();
         }
 
         if (IsJumping)
@@ -192,6 +204,11 @@ public class HeroEntity : MonoBehaviour
     private void _ApplyGroundDetection()
     {
         IsTouchingGround = _groundDetector.DetectGroundNearBy();
+    }
+
+    private void _ApplyWallDetection()
+    {
+        IsTouchingWall = _wallDetector.DetectWallNearBy();
     }
 
     private void _ResetVerticalSpeed()
@@ -334,25 +351,29 @@ public class HeroEntity : MonoBehaviour
 
 
 
+    public void dashStart()
+    {
+        _isDashing = true;
+        _dashTimer = 0f;
 
+    }
 
 
 
 
     public void DashMovement()
     {
-        _isDashing = true;
         _dashTimer += Time.deltaTime;
-        if (_dashTimer < _dashSettings.duration)
+
+        if (_dashTimer < _dashSettings.duration && !IsTouchingWall)
         {
             _horizontalSpeed = _dashSettings.speed;
         }
         else
         {
             _horizontalSpeed = 0f;
-            _dashTimer = 0f;
+            _isDashing = false;
         }
-        _isDashing = false;
     }
 
 
@@ -380,6 +401,15 @@ public class HeroEntity : MonoBehaviour
         GUILayout.Label($"JumpState = {_jumpState}");
         GUILayout.Label($"Horizontal Speed = {_horizontalSpeed}");
         GUILayout.Label($"Vertical Speed = {_verticalSpeed}");
+
+        if (IsTouchingWall)
+        {
+            GUILayout.Label("mur");
+        }
+        else
+        {
+            GUILayout.Label("pas mur");
+        }
         GUILayout.EndVertical();
     }
 }
