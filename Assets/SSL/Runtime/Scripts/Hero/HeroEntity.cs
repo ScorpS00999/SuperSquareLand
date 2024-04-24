@@ -13,8 +13,10 @@ public class HeroEntity : MonoBehaviour
     private float _horizontalSpeed = 0f;
     private float _moveDirX = 0f;
 
-    [Header("Horizontal Movements")]
+    [Header("Dash Movements")]
     [SerializeField] private HeroDashSettings _dashSettings;
+    [SerializeField] private float _dashTimer = 0f;
+    public bool _isDashing = false;
 
     [Header("Orientation")]
     [SerializeField] private Transform _orientVisualRoot;
@@ -336,11 +338,20 @@ public class HeroEntity : MonoBehaviour
 
 
 
-    public bool IsDashing() => false;
 
     public void DashMovement()
     {
-        _dashSettings.duration += Time.deltaTime;
+        _isDashing = true;
+        _dashTimer += Time.deltaTime;
+        if (_dashTimer < _dashSettings.duration)
+        {
+            _horizontalSpeed = _dashSettings.speed;
+        }
+        else
+        {
+            _horizontalSpeed = 0f;
+        }
+        _isDashing = false;
     }
 
 
