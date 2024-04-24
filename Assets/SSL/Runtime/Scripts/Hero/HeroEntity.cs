@@ -350,6 +350,7 @@ public class HeroEntity : MonoBehaviour
         else
         {
             _horizontalSpeed = 0f;
+            _dashTimer = 0f;
         }
         _isDashing = false;
     }
