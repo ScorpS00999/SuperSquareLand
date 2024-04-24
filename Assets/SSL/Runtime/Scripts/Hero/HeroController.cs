@@ -22,28 +22,21 @@ public class HeroController : MonoBehaviour
         float inputMoveX = 0f;
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Q))
         {
-            if (Input.GetKey(KeyCode.E))
-            {
-                _entity.DashMovement();
-            }
             inputMoveX = -1f;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            if (Input.GetKey(KeyCode.E))
-            {
-                _entity.DashMovement();
-            }
             inputMoveX = 1f;
         }
 
-        if (Input.GetKey(KeyCode.E))
-        {
-            _entity.DashMovement();
-        }
-
         return inputMoveX;
+    }
+
+
+    private bool _GetInputDash()
+    {
+        return Input.GetKey(KeyCode.E);
     }
 
 
@@ -81,6 +74,11 @@ public class HeroController : MonoBehaviour
             {
                 _entity.StopJumpImpulsion();
             }
+        }
+
+        if (_GetInputDash())
+        {
+            _entity.DashMovement();
         }
     }
 }
