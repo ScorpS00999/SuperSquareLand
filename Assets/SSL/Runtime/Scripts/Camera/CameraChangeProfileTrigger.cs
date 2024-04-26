@@ -6,6 +6,10 @@ public class CameraChangeProfileTrigger : MonoBehaviour
 
     [Header("Camera Profile")]
     [SerializeField] private CameraProfile _cameraProfile;
+
+    [Header("Camera Transition")]
+    [SerializeField] private CameraProfileTransition _enterTransition;
+    [SerializeField] private CameraProfileTransition _exitTransition;
     
     [Header("Trigger Box")]
     [SerializeField] private BoxCollider2D _boxCollider;
@@ -28,7 +32,7 @@ public class CameraChangeProfileTrigger : MonoBehaviour
         {
             return;
         }
-        CameraManager.Instance.EnterProfile(_cameraProfile);
+        CameraManager.Instance.EnterProfile(_cameraProfile, _enterTransition);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -37,6 +41,6 @@ public class CameraChangeProfileTrigger : MonoBehaviour
         {
             return;
         }
-        CameraManager.Instance.ExitProfile(_cameraProfile);
+        CameraManager.Instance.ExitProfile(_cameraProfile, _exitTransition);
     }
 }
