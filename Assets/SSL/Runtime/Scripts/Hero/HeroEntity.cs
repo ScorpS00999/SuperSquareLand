@@ -59,6 +59,11 @@ public class HeroEntity : MonoBehaviour
     [SerializeField] private HeroHorizontalMovementSettings _groundHorizontalMovementsSettings;
     [SerializeField] private HeroHorizontalMovementSettings _airHorizontalMovementsSettings;
 
+
+    //Camera Follow
+    private CameraFollowable _cameraFollowable;
+
+
     #endregion
 
     public bool IsTouchingGround { get; private set; } = false;
@@ -70,10 +75,32 @@ public class HeroEntity : MonoBehaviour
         _moveDirX = dirX;
     }
 
+
+
+
+    private void _UpdateCameraFollowPosition()
+    {
+        _cameraFollowable.FollowPositionX = _rigidbody.position.x;
+        if (IsTouchingGround && !IsJumping)
+        {
+            _cameraFollowable.FollowPositionY = _rigidbody.position.y;
+        }
+    }
+
+
+    private void Awake()
+    {
+        _cameraFollowable = GetComponent<CameraFollowable>();
+        _cameraFollowable.FollowPositionX = _rigidbody.position.x;
+        _cameraFollowable.FollowPositionY = _rigidbody.position.y;
+    }
+
     private void FixedUpdate()
     {
         _ApplyGroundDetection();
         _ApplyWallDetection();
+
+        _UpdateCameraFollowPosition();
 
         HeroHorizontalMovementSettings horizontalMovementsSettings = _GetCurrentHorizontalMovementsSettings();
 
@@ -375,6 +402,14 @@ public class HeroEntity : MonoBehaviour
             _isDashing = false;
         }
     }
+
+
+
+
+
+
+
+
 
 
 
