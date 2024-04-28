@@ -8,6 +8,10 @@ public class CameraProfile : MonoBehaviour
     [Header("Follow")]
     [SerializeField] private CameraFollowable _targetToFollow = null;
 
+    [Header("Auto Scroll")]
+    [SerializeField] private float _autoScrollHorizontal = 1f;
+    [SerializeField] private float _autoScrollVertical = 0f;
+
     [Header("Damping")]
     [SerializeField] private bool _useDampingHorizontally = false;
     [SerializeField] private float _horizontalDampingFactor = 5f;

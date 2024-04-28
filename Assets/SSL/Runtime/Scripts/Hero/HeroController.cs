@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class HeroController : MonoBehaviour
 {
+    #region Header
+
     [Header("Entity")]
     [SerializeField] private HeroEntity _entity;
     private bool _entityWasTouchingGround = false;
@@ -17,6 +19,10 @@ public class HeroController : MonoBehaviour
     [SerializeField] private float _coyoteTimeDuration = 0.2f;
     private float _coyoteTimeCountdown = -1f;
 
+    #endregion
+
+    #region GUI
+
     private void OnGUI()
     {
         if (!_guiDebug) return;
@@ -27,6 +33,8 @@ public class HeroController : MonoBehaviour
         GUILayout.Label($"CoyoteTime CountDown = {_coyoteTimeCountdown}");
         GUILayout.EndVertical();
     }
+
+    #endregion
 
     private float GetInputMoveX()
     {
@@ -125,10 +133,6 @@ public class HeroController : MonoBehaviour
 
 
 
-
-
-
-
     private void Start()
     {
         _CancelJumpBuffer();
@@ -159,9 +163,17 @@ public class HeroController : MonoBehaviour
 
         if (_GetInputDownJump())
         {
-            if ((_entity.IsTouchingGround || _IsCoyoteTimeActive()) && !_entity.IsJumping && !_entity._isDashing)
+            if ((_entity.IsTouchingGround || _IsCoyoteTimeActive() || _entity.jumpCount < _entity.jumpLenght) && !_entity._isDashing && _entity.CanJump)
             {
                 _entity.JumpStart();
+                if (!(_entity.jumpCount == _entity.jumpLenght - 1))
+                {
+                    _entity.jumpCount++;
+                }
+                else
+                {
+                    _entity.CanJump = false;
+                }
             }
             else
             {

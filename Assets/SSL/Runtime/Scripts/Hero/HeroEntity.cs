@@ -41,9 +41,13 @@ public class HeroEntity : MonoBehaviour
     public bool IsTouchingWall { get; private set; } = false;
 
     [Header("Jump")]
-    [SerializeField] private HeroJumpSettings _jumpSettings;
-    [SerializeField] private List<HeroJumpSettings> _jumpSettings2;
+    [SerializeField] private List<HeroJumpSettings> _jumpSettings;
     [SerializeField] private HeroFallSettings _jumpFallSettings;
+
+    public int jumpCount = 0;
+    public int jumpLenght;
+    public bool CanJump = true;
+
     enum JumpState
     {
         NotJumping,
@@ -74,6 +78,8 @@ public class HeroEntity : MonoBehaviour
         _cameraFollowable = GetComponent<CameraFollowable>();
         _cameraFollowable.FollowPositionX = _rigidbody.position.x;
         _cameraFollowable.FollowPositionY = _rigidbody.position.y;
+
+        jumpLenght = _jumpSettings.Count;
     }
 
     private void Update()
@@ -259,11 +265,10 @@ public class HeroEntity : MonoBehaviour
 
     private void _UpdateJumpStateImpulsion()
     {
-        //dash à la vertical
         _jumpTimer += Time.fixedDeltaTime;
-        if (_jumpTimer < _jumpSettings.jumpMaxDuration)
+        if (_jumpTimer < _jumpSettings[jumpCount].jumpMaxDuration)
         {
-            _verticalSpeed = _jumpSettings.jumpSpeed;
+            _verticalSpeed = _jumpSettings[jumpCount].jumpSpeed;
         }
         else
         {
@@ -281,6 +286,8 @@ public class HeroEntity : MonoBehaviour
         {
             _ResetVerticalSpeed();
             _jumpState = JumpState.NotJumping;
+            jumpCount = 0;
+            CanJump = true;
         }
     }
 
@@ -329,7 +336,7 @@ public class HeroEntity : MonoBehaviour
 
     public bool IsJumpImpulsing => _jumpState == JumpState.JumpImpulsion;
 
-    public bool IsJumpMinDurationReached => _jumpTimer >= _jumpSettings.jumpMinDuration;
+    public bool IsJumpMinDurationReached => _jumpTimer >= _jumpSettings[jumpCount].jumpMinDuration;
 
     #endregion
 
