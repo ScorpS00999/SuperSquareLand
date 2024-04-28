@@ -846,7 +846,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
@@ -1001,6 +1001,7 @@ GameObject:
   - component: {fileID: 6480041685457909243}
   - component: {fileID: 8653766404188182654}
   - component: {fileID: 8195330379735550045}
+  - component: {fileID: 5420812551397525010}
   m_Layer: 0
   m_Name: SquareHero_Entity
   m_TagString: Untagged
@@ -1052,9 +1053,9 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &6480041685457909243
 MonoBehaviour:
@@ -1078,22 +1079,35 @@ MonoBehaviour:
     speed: 40
     duration: 0.1
   _dashTimer: 0
-  _isDashing: 0
+  isDashing: 0
   _orientVisualRoot: {fileID: 3024582456938629764}
-  _guiDebug: 1
+  _guiDebug: 0
   _fallSettings:
     fallGravity: 20
     fallSpeedMax: 10
   _groundDetector: {fileID: 8653766404188182654}
   _wallDetector: {fileID: 8195330379735550045}
   _jumpSettings:
-    jumpSpeed: 8
-    jumpMinDuration: 0.01
+  - jumpSpeed: 15
+    jumpMinDuration: 0.1
     jumpMaxDuration: 0.25
-  _jumpSettings2: []
+  - jumpSpeed: 10
+    jumpMinDuration: 0.1
+    jumpMaxDuration: 0.25
+  - jumpSpeed: 8
+    jumpMinDuration: 0.05
+    jumpMaxDuration: 0.1
   _jumpFallSettings:
     fallGravity: 60
     fallSpeedMax: 20
+  jumpCount: 0
+  jumpLenght: 0
+  CanJump: 1
+  _airJumpHorizontalMovementsSettings:
+    acceleration: 20
+    deceleration: 15
+    turnBackFriction: 25
+    speedMax: 5
   _groundHorizontalMovementsSettings:
     acceleration: 20
     deceleration: 15
@@ -1147,6 +1161,18 @@ MonoBehaviour:
   _wallLayerMask:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &5420812551397525010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6771865885331362632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93d0dac3b5ee8904cafd7c32ae586354, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9036323274477850942
 GameObject:
   m_ObjectHideFlags: 0
