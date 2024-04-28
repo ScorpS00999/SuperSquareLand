@@ -919,6 +919,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _profileType: 0
   _targetToFollow: {fileID: 0}
+  _autoScroll: {fileID: 0}
   _useDampingHorizontally: 0
   _horizontalDampingFactor: 5
   _useDampingVertically: 0
@@ -1551,15 +1552,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _profileType: 1
   _targetToFollow: {fileID: 732721623840024186}
+  _autoScroll: {fileID: 0}
   _useDampingHorizontally: 1
   _horizontalDampingFactor: 7
   _useDampingVertically: 1
   _verticalDampingFactor: 5
-  _hasBounds: 0
+  _hasBounds: 1
   _boundRect:
     serializedVersion: 2
-    x: 80
-    y: -5
+    x: 80.3
+    y: 96
     width: 47.5
     height: 15
 --- !u!1 &1641381205

@@ -4,6 +4,8 @@ public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance { get; private set; }
 
+
+
     [Header("Camera")]
     [SerializeField] private Camera _camera;
 
@@ -80,22 +82,6 @@ public class CameraManager : MonoBehaviour
 
 
 
-    public void EnterProfile(CameraProfile cameraProfile)
-    {
-        _currentCameraProfile = cameraProfile;
-    }
-
-    public void ExitProfile(CameraProfile cameraProfile)
-    {
-        if (_currentCameraProfile != cameraProfile)
-        {
-            return;
-        }
-        _currentCameraProfile = _defaultCameraProfile;
-    }
-
-
-
 
     private void _PlayProfileTransition(CameraProfileTransition transition)
     {
@@ -110,6 +96,8 @@ public class CameraManager : MonoBehaviour
     {
         return _profileTransitionTimer < _profileTransitionDuration;
     }
+
+    #region Enter / Exit profile
 
     public void EnterProfile(CameraProfile cameraProfile, CameraProfileTransition transition = null)
     {
@@ -134,6 +122,8 @@ public class CameraManager : MonoBehaviour
         }
         _SetCameraDampedPosition(_FindCameraNextPosition());
     }
+
+    #endregion
 
 
     private float _CalculateProfileTransitionCameraSize(float endSize)

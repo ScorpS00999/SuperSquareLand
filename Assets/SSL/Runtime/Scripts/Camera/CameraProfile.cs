@@ -8,7 +8,6 @@ public class CameraProfile : MonoBehaviour
     [Header("Follow")]
     [SerializeField] private CameraFollowable _targetToFollow = null;
 
-
     [Header("Damping")]
     [SerializeField] private bool _useDampingHorizontally = false;
     [SerializeField] private float _horizontalDampingFactor = 5f;
@@ -38,7 +37,10 @@ public class CameraProfile : MonoBehaviour
 
     public CameraFollowable TargetToFollow => _targetToFollow;
 
-    
+
+
+
+
 
     private Camera _camera;
 
@@ -46,10 +48,14 @@ public class CameraProfile : MonoBehaviour
 
     public Vector3 Position => _camera.transform.position;
 
+
+
+
     public enum CameraProfileType
     {
         Static = 0,
-        FollowTarget
+        FollowTarget,
+        AutoScroll
     }
 
     private void Awake()
