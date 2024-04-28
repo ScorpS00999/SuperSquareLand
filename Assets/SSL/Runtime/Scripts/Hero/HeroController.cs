@@ -159,7 +159,7 @@ public class HeroController : MonoBehaviour
 
         if (_GetInputDownJump())
         {
-            if ((_entity.IsTouchingGround || _IsCoyoteTimeActive()) && !_entity.IsJumping)
+            if ((_entity.IsTouchingGround || _IsCoyoteTimeActive()) && !_entity.IsJumping && !_entity._isDashing)
             {
                 _entity.JumpStart();
             }

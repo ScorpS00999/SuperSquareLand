@@ -8,6 +8,7 @@ public class CameraProfile : MonoBehaviour
     [Header("Follow")]
     [SerializeField] private CameraFollowable _targetToFollow = null;
 
+
     [Header("Damping")]
     [SerializeField] private bool _useDampingHorizontally = false;
     [SerializeField] private float _horizontalDampingFactor = 5f;
@@ -23,12 +24,21 @@ public class CameraProfile : MonoBehaviour
     public float VerticalDampingFactor => _verticalDampingFactor;
 
 
+    [Header("Bounds")]
+    [SerializeField] private bool _hasBounds = false;
+    [SerializeField] private Rect _boundRect = new Rect(0f, 0f, 10f, 10f);
+
+    public bool HasBounds => _hasBounds;
+
+    public Rect BoundRect => _boundRect;
 
 
 
     public CameraProfileType ProfileType => _profileType;
 
     public CameraFollowable TargetToFollow => _targetToFollow;
+
+    
 
     private Camera _camera;
 
@@ -49,6 +59,17 @@ public class CameraProfile : MonoBehaviour
         {
             _camera.enabled = false;
         }
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!_hasBounds)
+        {
+            return;
+        }
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(_boundRect.center, _boundRect.size);
     }
 }
 

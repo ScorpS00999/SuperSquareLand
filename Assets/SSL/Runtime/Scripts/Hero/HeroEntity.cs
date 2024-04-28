@@ -34,22 +34,22 @@ public class HeroEntity : MonoBehaviour
 
     [Header("Ground")]
     [SerializeField] private GroundDetector _groundDetector;
+    public bool IsTouchingGround { get; private set; } = false;
 
     [Header("Wall")]
     [SerializeField] private WallDetector _wallDetector;
+    public bool IsTouchingWall { get; private set; } = false;
 
     [Header("Jump")]
     [SerializeField] private HeroJumpSettings _jumpSettings;
     [SerializeField] private List<HeroJumpSettings> _jumpSettings2;
     [SerializeField] private HeroFallSettings _jumpFallSettings;
-
     enum JumpState
     {
         NotJumping,
         JumpImpulsion,
         Falling
     }
-
     private JumpState _jumpState = JumpState.NotJumping;
     private float _jumpTimer = 0f;
 
@@ -66,33 +66,19 @@ public class HeroEntity : MonoBehaviour
 
     #endregion
 
-    public bool IsTouchingGround { get; private set; } = false;
 
-    public bool IsTouchingWall { get; private set; } = false;
-
-    public void SetMoveDirX(float dirX)
-    {
-        _moveDirX = dirX;
-    }
-
-
-
-
-    private void _UpdateCameraFollowPosition()
-    {
-        _cameraFollowable.FollowPositionX = _rigidbody.position.x;
-        if (IsTouchingGround && !IsJumping)
-        {
-            _cameraFollowable.FollowPositionY = _rigidbody.position.y;
-        }
-    }
-
+    #region Awake, Update, FixedUpdate
 
     private void Awake()
     {
         _cameraFollowable = GetComponent<CameraFollowable>();
         _cameraFollowable.FollowPositionX = _rigidbody.position.x;
         _cameraFollowable.FollowPositionY = _rigidbody.position.y;
+    }
+
+    private void Update()
+    {
+        _UpdateOrientVisual();
     }
 
     private void FixedUpdate()
@@ -137,10 +123,28 @@ public class HeroEntity : MonoBehaviour
         _ApplyVerticalSpeed();
     }
 
-    private void _ChangeOrientFromHorizontalMovement()
+    #endregion
+
+
+    #region Controle camera - suivre un object
+
+    private void _UpdateCameraFollowPosition()
     {
-        if (_moveDirX == 0f) return;
-        _orientX = Mathf.Sign(_moveDirX);
+        _cameraFollowable.FollowPositionX = _rigidbody.position.x;
+        if (IsTouchingGround && !IsJumping)
+        {
+            _cameraFollowable.FollowPositionY = _rigidbody.position.y;
+        }
+    }
+
+    #endregion
+
+
+    #region Déplacements horizontaux
+
+    public void SetMoveDirX(float dirX)
+    {
+        _moveDirX = dirX;
     }
 
     private void _ApplyHorizontalSpeed()
@@ -149,10 +153,15 @@ public class HeroEntity : MonoBehaviour
         velocity.x = _horizontalSpeed * _orientX;
         _rigidbody.velocity = velocity;
     }
-    
-    private void Update()
+
+    #endregion
+
+
+    #region Orientation personnage
+    private void _ChangeOrientFromHorizontalMovement()
     {
-        _UpdateOrientVisual();
+        if (_moveDirX == 0f) return;
+        _orientX = Mathf.Sign(_moveDirX);
     }
 
     private void _UpdateOrientVisual()
@@ -162,43 +171,50 @@ public class HeroEntity : MonoBehaviour
         _orientVisualRoot.localScale = newScale;
     }
 
-    #region Mouvement
+    #endregion
 
-    private void _Accelerate()
+
+    #region Accélération / Décélération
+
+    private void _Accelerate(HeroHorizontalMovementSettings settings)
     {
-        _horizontalSpeed += _movementsSettings.acceleration * Time.fixedDeltaTime;
-        if (_horizontalSpeed > _movementsSettings.speedMax )
+        _horizontalSpeed += settings.acceleration * Time.deltaTime;
+        if (_horizontalSpeed > settings.speedMax)
         {
-            _horizontalSpeed = _movementsSettings.speedMax;
+            _horizontalSpeed = settings.speedMax;
         }
     }
 
-    private void _Decelerate()
+    private void _Decelerate(HeroHorizontalMovementSettings settings)
     {
-        _horizontalSpeed -= _movementsSettings.deceleration * Time.fixedDeltaTime;
+        _horizontalSpeed -= settings.deceleration * Time.deltaTime;
         if (_horizontalSpeed < 0f)
         {
             _horizontalSpeed = 0f;
         }
     }
 
-    #endregion
-
-    private void _UpdateHorizontalSpeed()
+    private void _UpdateHorizontalSpeed(HeroHorizontalMovementSettings settings)
     {
         if (_moveDirX != 0f)
         {
-            _Accelerate();
-        } else
+            _Accelerate(settings);
+        }
+        else
         {
-            _Decelerate();
+            _Decelerate(settings);
         }
     }
 
-    private void _TurnBack()
+    #endregion
+
+
+    #region Demi tour
+
+    private void _TurnBack(HeroHorizontalMovementSettings settings)
     {
-        _horizontalSpeed -= _movementsSettings.turnBackFriction * Time.fixedDeltaTime;
-        if (_horizontalSpeed < 0f) 
+        _horizontalSpeed -= settings.turnBackFriction * Time.fixedDeltaTime;
+        if (_horizontalSpeed < 0f)
         {
             _horizontalSpeed = 0f;
             _ChangeOrientFromHorizontalMovement();
@@ -210,7 +226,18 @@ public class HeroEntity : MonoBehaviour
         return _moveDirX * _orientX < 0f;
     }
 
-    
+    #endregion
+
+
+    #region Chute, gravité et saut
+
+
+    private void _ApplyVerticalSpeed()
+    {
+        Vector2 velocity = _rigidbody.velocity;
+        velocity.y = _verticalSpeed;
+        _rigidbody.velocity = velocity;
+    }
 
     private void _ApplyFallGravity(HeroFallSettings settings)
     {
@@ -221,40 +248,14 @@ public class HeroEntity : MonoBehaviour
         }
     }
 
-    private void _ApplyVerticalSpeed()
-    {
-        Vector2 velocity = _rigidbody.velocity;
-        velocity.y = _verticalSpeed;
-        _rigidbody.velocity = velocity;
-    }
 
-    private void _ApplyGroundDetection()
-    {
-        IsTouchingGround = _groundDetector.DetectGroundNearBy();
-    }
-
-    private void _ApplyWallDetection()
-    {
-        IsTouchingWall = _wallDetector.DetectWallNearBy();
-    }
-
-    private void _ResetVerticalSpeed()
-    {
-        _verticalSpeed = 0f;
-    }
-
-
-
-
+    //Partie Saut
     public void JumpStart()
     {
         _jumpState = JumpState.JumpImpulsion;
         _jumpTimer = 0f;
     }
-
     public bool IsJumping => _jumpState != JumpState.NotJumping;
-
-
 
     private void _UpdateJumpStateImpulsion()
     {
@@ -263,7 +264,8 @@ public class HeroEntity : MonoBehaviour
         if (_jumpTimer < _jumpSettings.jumpMaxDuration)
         {
             _verticalSpeed = _jumpSettings.jumpSpeed;
-        } else
+        }
+        else
         {
             _jumpState = JumpState.Falling;
         }
@@ -296,10 +298,29 @@ public class HeroEntity : MonoBehaviour
         }
     }
 
+    #endregion
 
 
+    #region Détection sol et mur
+
+    private void _ApplyGroundDetection()
+    {
+        IsTouchingGround = _groundDetector.DetectGroundNearBy();
+    }
+    private void _ResetVerticalSpeed()
+    {
+        _verticalSpeed = 0f;
+    }
+
+    private void _ApplyWallDetection()
+    {
+        IsTouchingWall = _wallDetector.DetectWallNearBy();
+    }
+
+    #endregion
 
 
+    #region Hauteur saut dynamique 
 
     public void StopJumpImpulsion()
     {
@@ -310,58 +331,10 @@ public class HeroEntity : MonoBehaviour
 
     public bool IsJumpMinDurationReached => _jumpTimer >= _jumpSettings.jumpMinDuration;
 
+    #endregion
 
 
-
-
-
-
-    private void _Accelerate(HeroHorizontalMovementSettings settings)
-    {
-        _horizontalSpeed += settings.acceleration * Time.deltaTime;
-        if (_horizontalSpeed > settings.speedMax)
-        {
-            _horizontalSpeed = settings.speedMax;
-        }
-    }
-
-
-
-    private void _Decelerate(HeroHorizontalMovementSettings settings)
-    {
-        _horizontalSpeed -= settings.deceleration * Time.deltaTime;
-        if (_horizontalSpeed < 0f)
-        {
-            _horizontalSpeed = 0f;
-        }
-    }
-
-
-
-    private void _UpdateHorizontalSpeed(HeroHorizontalMovementSettings settings)
-    {
-        if (_moveDirX != 0f)
-        {
-            _Accelerate(settings);
-        } else
-        {
-            _Decelerate(settings);
-        }
-    }
-
-
-
-    private void _TurnBack(HeroHorizontalMovementSettings settings)
-    {
-        _horizontalSpeed -= settings.turnBackFriction * Time.fixedDeltaTime;
-        if (_horizontalSpeed < 0f)
-        {
-            _horizontalSpeed = 0f;
-            _ChangeOrientFromHorizontalMovement();
-        }
-    }
-
-
+    #region Air control
 
     private HeroHorizontalMovementSettings _GetCurrentHorizontalMovementsSettings()
     {
@@ -374,9 +347,10 @@ public class HeroEntity : MonoBehaviour
             return _airHorizontalMovementsSettings;
         }
     }
+    #endregion
 
 
-
+    #region Dash
 
     public void dashStart()
     {
@@ -385,9 +359,6 @@ public class HeroEntity : MonoBehaviour
 
     }
 
-
-
-
     public void DashMovement()
     {
         _dashTimer += Time.deltaTime;
@@ -395,6 +366,7 @@ public class HeroEntity : MonoBehaviour
         if (_dashTimer < _dashSettings.duration && !IsTouchingWall)
         {
             _horizontalSpeed = _dashSettings.speed;
+            _verticalSpeed = 0f;
         }
         else
         {
@@ -403,19 +375,10 @@ public class HeroEntity : MonoBehaviour
         }
     }
 
+    #endregion
 
 
-
-
-
-
-
-
-
-
-
-
-
+    #region GUI
 
     private void OnGUI()
     {
@@ -447,4 +410,6 @@ public class HeroEntity : MonoBehaviour
         }
         GUILayout.EndVertical();
     }
+
+    #endregion
 }
