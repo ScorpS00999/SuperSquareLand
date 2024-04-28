@@ -43,10 +43,10 @@ public class HeroEntity : MonoBehaviour
     [Header("Jump")]
     [SerializeField] private List<HeroJumpSettings> _jumpSettings;
     [SerializeField] private HeroFallSettings _jumpFallSettings;
-
     public int jumpCount = 0;
     public int jumpLenght;
     public bool CanJump = true;
+    [SerializeField] private HeroHorizontalMovementSettings _airJumpHorizontalMovementsSettings;
 
     enum JumpState
     {
@@ -95,6 +95,7 @@ public class HeroEntity : MonoBehaviour
         _UpdateCameraFollowPosition();
 
         HeroHorizontalMovementSettings horizontalMovementsSettings = _GetCurrentHorizontalMovementsSettings();
+        HeroHorizontalMovementSettings horizontalFallMovementsSettings = _GetCurrentJumpHorizontalMovementsSettings();
 
         if (_AreOrientAndMovementOpposite())
         {
@@ -104,6 +105,7 @@ public class HeroEntity : MonoBehaviour
             _UpdateHorizontalSpeed(horizontalMovementsSettings);
             _ChangeOrientFromHorizontalMovement();
         }
+
         if (isDashing)
         {
             DashMovement();
@@ -112,6 +114,15 @@ public class HeroEntity : MonoBehaviour
         if (IsJumping)
         {
             _UpdateJump();
+            if (_AreOrientAndMovementOpposite())
+            {
+                _TurnBack(horizontalFallMovementsSettings);
+            }
+            else
+            {
+                _UpdateHorizontalSpeed(horizontalFallMovementsSettings);
+                _ChangeOrientFromHorizontalMovement();
+            }
         } else
         {
             if (!IsTouchingGround)
@@ -123,7 +134,6 @@ public class HeroEntity : MonoBehaviour
                 _ResetVerticalSpeed();
             }
         }
-
 
         _ApplyHorizontalSpeed();
         _ApplyVerticalSpeed();
@@ -354,6 +364,18 @@ public class HeroEntity : MonoBehaviour
             return _airHorizontalMovementsSettings;
         }
     }
+    private HeroHorizontalMovementSettings _GetCurrentJumpHorizontalMovementsSettings()
+    {
+        if (IsTouchingGround)
+        {
+            return _groundHorizontalMovementsSettings;
+        }
+        else
+        {
+            return _airJumpHorizontalMovementsSettings;
+        }
+    }
+
     #endregion
 
 
