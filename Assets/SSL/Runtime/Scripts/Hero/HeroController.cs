@@ -36,6 +36,8 @@ public class HeroController : MonoBehaviour
 
     #endregion
 
+    #region GetInput
+
     private float GetInputMoveX()
     {
         float inputMoveX = 0f;
@@ -48,35 +50,27 @@ public class HeroController : MonoBehaviour
         {
             inputMoveX = 1f;
         }
-
         return inputMoveX;
     }
-
 
     private bool _GetInputDash()
     {
         return Input.GetKey(KeyCode.E);
     }
 
-
-
     private bool _GetInputDownJump()
     {
         return Input.GetKeyDown(KeyCode.Space);
     }
-
-
 
     private bool _GetInputJump()
     {
         return Input.GetKey(KeyCode.Space);
     }
 
+    #endregion
 
-
-
-
-
+    #region Jump
 
     private void _ResetJumpBuffer()
     {
@@ -101,11 +95,9 @@ public class HeroController : MonoBehaviour
         _jumpBufferTimer = _jumpBufferDuration;
     }
 
+    #endregion
 
-
-
-
-
+    #region CoyoteTime
 
     private bool _IsCoyoteTimeActive()
     {
@@ -123,31 +115,28 @@ public class HeroController : MonoBehaviour
         _coyoteTimeCountdown = _coyoteTimeDuration;
     }
 
+    #endregion
 
+    #region ExitGound
 
     private bool _EntityHasExitGround()
     {
         return _entityWasTouchingGround && !_entity.IsTouchingGround;
     }
 
+    #endregion
 
-
+    #region Start, Update
 
     private void Start()
     {
         _CancelJumpBuffer();
     }
 
-
-
-
     private void Update()
     {
         _UpdateJumpBuffer();
-
         _entity.SetMoveDirX(GetInputMoveX());
-
-
 
         if (_EntityHasExitGround())
         {
@@ -158,12 +147,9 @@ public class HeroController : MonoBehaviour
             _UpdateCoyoteTime();
         }
 
-
-
-
         if (_GetInputDownJump())
         {
-            if ((_entity.IsTouchingGround || _IsCoyoteTimeActive() || _entity.jumpCount < _entity.jumpLenght) && !_entity._isDashing && _entity.CanJump)
+            if ((_entity.IsTouchingGround || _IsCoyoteTimeActive() || _entity.jumpCount < _entity.jumpLenght) && !_entity.isDashing && _entity.CanJump)
             {
                 _entity.JumpStart();
                 if (!(_entity.jumpCount == _entity.jumpLenght - 1))
@@ -189,7 +175,6 @@ public class HeroController : MonoBehaviour
             }
         }
 
-
         if (_entity.IsJumpImpulsing)
         {
             if (!_GetInputJump() && _entity.IsJumpMinDurationReached)
@@ -203,10 +188,8 @@ public class HeroController : MonoBehaviour
             _entity.dashStart();
         }
 
-
-
-
-
         _entityWasTouchingGround = _entity.IsTouchingGround;
     }
+
+    #endregion
 }

@@ -2,9 +2,9 @@
 
 public class CameraManager : MonoBehaviour
 {
+    #region Header
+
     public static CameraManager Instance { get; private set; }
-
-
 
     [Header("Camera")]
     [SerializeField] private Camera _camera;
@@ -12,7 +12,6 @@ public class CameraManager : MonoBehaviour
     [Header("Profile System")]
     [SerializeField] private CameraProfile _defaultCameraProfile;
     private CameraProfile _currentCameraProfile;
-    
     
     //Transition
     private float _profileTransitionTimer = 0f;
@@ -24,6 +23,9 @@ public class CameraManager : MonoBehaviour
     //Damping
     private Vector3 _dampedPosition;
 
+    #endregion
+
+    #region Camera base
 
     private void _SetCameraPosition(Vector3 position)
     {
@@ -37,6 +39,10 @@ public class CameraManager : MonoBehaviour
     {
         _camera.orthographicSize = size;
     }
+
+    #endregion
+
+    #region Init, Awake, Start, Update
 
     private void _InitToDefaultProfile()
     {
@@ -79,9 +85,9 @@ public class CameraManager : MonoBehaviour
         }
     }
 
+    #endregion
 
-
-
+    #region Transition
 
     private void _PlayProfileTransition(CameraProfileTransition transition)
     {
@@ -96,6 +102,22 @@ public class CameraManager : MonoBehaviour
     {
         return _profileTransitionTimer < _profileTransitionDuration;
     }
+
+    private float _CalculateProfileTransitionCameraSize(float endSize)
+    {
+        float percent = _profileTransitionTimer / _profileTransitionDuration;
+        float startSize = _profileTransitionStartSize;
+        return Mathf.Lerp(startSize, endSize, percent);
+    }
+
+    private Vector3 _CalculateProfileTransitionPosition(Vector3 destination)
+    {
+        float percent = _profileTransitionTimer / _profileTransitionDuration;
+        Vector3 origin = _profileTransitionStartPosition;
+        return Vector3.Lerp(origin, destination, percent);
+    }
+
+    #endregion
 
     #region Enter / Exit profile
 
@@ -125,22 +147,7 @@ public class CameraManager : MonoBehaviour
 
     #endregion
 
-
-    private float _CalculateProfileTransitionCameraSize(float endSize)
-    {
-        float percent = _profileTransitionTimer / _profileTransitionDuration;
-        float startSize = _profileTransitionStartSize;
-        return Mathf.Lerp(startSize, endSize, percent);
-    }
-
-    private Vector3 _CalculateProfileTransitionPosition(Vector3 destination)
-    {
-        float percent = _profileTransitionTimer / _profileTransitionDuration;
-        Vector3 origin = _profileTransitionStartPosition;
-        return Vector3.Lerp(origin, destination, percent);
-    }
-
-
+    #region Camera position
 
     private Vector3 _FindCameraNextPosition()
     {
@@ -157,11 +164,9 @@ public class CameraManager : MonoBehaviour
         return _currentCameraProfile.Position;
     }
 
+    #endregion
 
-
-
-
-
+    #region Damping
 
     private Vector3 _ApplyDamping(Vector3 position)
     {
@@ -180,10 +185,8 @@ public class CameraManager : MonoBehaviour
         {
             _dampedPosition.y = position.y;
         }
-
         return _dampedPosition;
     }
-
 
     private void _SetCameraDampedPosition(Vector3 position)
     {
@@ -191,8 +194,9 @@ public class CameraManager : MonoBehaviour
         _dampedPosition.y= position.y;
     }
 
+    #endregion
 
-
+    #region Délimitations
 
     private Vector3 _ClampPositionIntoBounds(Vector3 position)
     {
@@ -216,7 +220,6 @@ public class CameraManager : MonoBehaviour
             position.x = boundsRect.xMin + worldHalfScreenSize.x;
         }
 
-
         if (position.y > boundsRect.yMax - worldHalfScreenSize.y)
         {
             position.y = boundsRect.yMax - worldHalfScreenSize.y;
@@ -225,8 +228,8 @@ public class CameraManager : MonoBehaviour
         {
             position.y = boundsRect.yMin + worldHalfScreenSize.y;
         }
-
-
         return position;
     }
+
+    #endregion
 }

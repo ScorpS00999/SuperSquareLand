@@ -2,6 +2,8 @@
 
 public class CameraChangeProfileTrigger : MonoBehaviour
 {
+    #region Header
+
     private const string TARGET_TAG = "CameraTriggerTarget";
 
     [Header("Camera Profile")]
@@ -14,6 +16,10 @@ public class CameraChangeProfileTrigger : MonoBehaviour
     [Header("Trigger Box")]
     [SerializeField] private BoxCollider2D _boxCollider;
 
+    #endregion
+
+    #region Gizmos
+
     private void OnDrawGizmos()
     {
         if (_boxCollider == null) return;
@@ -25,6 +31,10 @@ public class CameraChangeProfileTrigger : MonoBehaviour
         Gizmos.DrawCube(boxCenter, boxSize);
         Gizmos.color = Color.white;
     }
+
+    #endregion
+
+    #region OnTrigger
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -43,4 +53,6 @@ public class CameraChangeProfileTrigger : MonoBehaviour
         }
         CameraManager.Instance.ExitProfile(_cameraProfile, _exitTransition);
     }
+
+    #endregion
 }
