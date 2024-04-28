@@ -919,7 +919,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _profileType: 0
   _targetToFollow: {fileID: 0}
-  _autoScroll: {fileID: 0}
   _useDampingHorizontally: 0
   _horizontalDampingFactor: 5
   _useDampingVertically: 0
@@ -938,7 +937,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 869992943}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -1552,12 +1551,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _profileType: 1
   _targetToFollow: {fileID: 732721623840024186}
-  _autoScroll: {fileID: 0}
   _useDampingHorizontally: 1
   _horizontalDampingFactor: 7
   _useDampingVertically: 1
   _verticalDampingFactor: 5
-  _hasBounds: 1
+  _hasBounds: 0
   _boundRect:
     serializedVersion: 2
     x: 80
@@ -1841,6 +1839,14 @@ PrefabInstance:
       value: SquareHero_Entity
       objectReference: {fileID: 0}
     - target: {fileID: 7212136366118121974, guid: 58ffc10b51f5a6a4996c22f63f520b49, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7212136366118121974, guid: 58ffc10b51f5a6a4996c22f63f520b49, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7882692256784899649, guid: 58ffc10b51f5a6a4996c22f63f520b49, type: 3}
       propertyPath: m_Interpolate
       value: 1
       objectReference: {fileID: 0}
